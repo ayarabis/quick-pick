@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { appStore, canHide, journalStore, showNotification, store, type Item } from '$lib/app';
+	import {
+		appStore,
+		canHide,
+		journalStore,
+		settingStore,
+		showNotification,
+		store,
+		type Item
+	} from '$lib/app';
 	import ItemNote from '$lib/components/ItemNote.svelte';
 	import ItemResource from '$lib/components/ItemResource.svelte';
 	import ItemSnippet from '$lib/components/ItemSnippet.svelte';
@@ -339,6 +347,9 @@
 		#page {
 			overflow-x: hidden;
 		}
+		.item button {
+			min-height: 30px;
+		}
 	</style>
 </svelte:head>
 
@@ -384,19 +395,19 @@
 				value="drop here to remove shortcut" />
 		</div>
 	{:else}
-		<div class="w-full card relative flex items-center pr-2 border-2 border-transparent">
+		<div class="w-full card relative flex items-center border-2 border-transparent">
 			<i class="mdi mdi-magnify absolute left-3 top-[50%] translate-y-[-50%]" />
 			<input
 				bind:value={search}
 				on:input={filterItems}
 				id="searchbox"
 				type="text"
-				class="!bg-transparent ml-7 "
+				class="!bg-transparent px-7 w-full"
 				autocomplete="off"
 				autocapitalize="off"
 				autocorrect="off" />
 			{#if search}
-				<button on:click={clearItems}>
+				<button on:click={clearItems} class="absolute right-3">
 					<i class="mdi mdi-backspace" />
 				</button>
 			{/if}
@@ -418,17 +429,16 @@
 				class="item"
 				class:active>
 				{#if item.type == 'Snippet'}
-					<ItemSnippet {item} {itemHeight} {active} {disableHover} />
+					<ItemSnippet {item} {active} {disableHover} />
 				{:else if ['File', 'Folder'].includes(item.type)}
-					<ItemResource {item} {itemHeight} {active} {disableHover} {actionIndex} />
+					<ItemResource {item} {active} {disableHover} {actionIndex} />
 				{:else if item.type == 'WebURL'}
-					<ItemUrl {item} {itemHeight} {active} {disableHover} />
+					<ItemUrl {item} {active} {disableHover} />
 				{:else if item.type == 'Note'}
-					<ItemNote {item} {itemHeight} {active} {disableHover} />
+					<ItemNote {item} {active} {disableHover} />
 				{:else if (item.type = 'Action')}
 					<button
 						on:click|preventDefault|stopPropagation={item.callback}
-						style="min-height: {itemHeight}px;"
 						class="action flex items-center w-full px-2 rounded-md cursor-pointer {disableHover
 							? ''
 							: 'hover:bg-surface-500'}  {active ? 'bg-primary-800' : ''}">

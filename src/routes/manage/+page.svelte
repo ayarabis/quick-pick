@@ -325,8 +325,7 @@
 	{@html github}
 	<style>
 		pre {
-			padding: 0px !important;
-			background: transparent !important;
+			border-radius: 15px !important;
 		}
 	</style>
 </svelte:head>
@@ -334,23 +333,33 @@
 <AppShell>
 	<svelte:fragment slot="header">
 		<TitleBar />
-		<Header title="Quick Pick" />
+		<Header title="Quick Pick">
+			<svelte:fragment slot="action">
+				<a href="/manage/settings" class="mr-2">
+					<i class="mdi mdi-cog text-2xl" />
+				</a>
+			</svelte:fragment>
+		</Header>
 		<div class="p-1">
-			<div class="w-full card relative flex items-center">
-				<i class="mdi mdi-magnify absolute left-3 top-[50%] translate-y-[-50%]" />
-				<input
-					bind:value={search}
-					type="text"
-					class="!bg-transparent ml-9"
-					autocomplete="off"
-					autocapitalize="off"
-					autocorrect="off"
-					on:input={filterItems} />
-				{#if search}
-					<button class="mr-2" on:click={() => (search = '')}>
-						<i class="mdi mdi-backspace" />
-					</button>
-				{/if}
+			<div class="w-full card flex items-center">
+				<div class="relative flex-grow flex whitespace-nowrap">
+					<i class="mdi mdi-magnify absolute left-3 top-[50%] translate-y-[-50%]" />
+					<input
+						bind:value={search}
+						type="text"
+						class="!bg-transparent px-7"
+						autocomplete="off"
+						autocapitalize="off"
+						autocorrect="off"
+						on:input={filterItems} />
+					{#if search}
+						<button
+							class="absolute right-3 top-[50%] translate-y-[-50%]"
+							on:click={() => (search = '')}>
+							<i class="mdi mdi-backspace" />
+						</button>
+					{/if}
+				</div>
 				<div class="whitespace-nowrap">
 					<RadioGroup selected={typeFilter} padding="px-2 py-1">
 						<RadioItem value="All">All</RadioItem>
@@ -451,9 +460,7 @@
 								{item.path}
 							</div>
 						</div>
-						<div
-							class="flex gap-3 items-center sticky right-0 card px-2"
-							style="height: 30px;">
+						<div class="flex gap-3 items-center sticky right-0 card px-2 h-full">
 							<button on:click={() => editResource(item)}>
 								<i class="mdi mdi-pencil text-primary-400" />
 							</button>
@@ -468,9 +475,7 @@
 							<i class="mdi mdi-note-edit" />
 							<span class="ml-1 whitespace-nowrap mr-2">{item.name}</span>
 						</div>
-						<div
-							class="flex gap-3 items-center sticky right-0 card px-2"
-							style="height: 30px;">
+						<div class="flex gap-3 items-center sticky right-0 card px-2">
 							<button on:click={() => openNote(item)}>
 								<i class="mdi mdi-pencil text-primary-400" />
 							</button>
@@ -479,7 +484,7 @@
 					</div>
 				</div>
 			{:else if item.type == 'Snippet'}
-				<div class="card w-full mb-1">
+				<div class="card w-full mb-1 rounded-2xl">
 					<div class="text-left flex justify-between items-center mb-1 px-2">
 						<div class="whitespace-nowrap">
 							<i class="mdi mdi-code-braces mr-2" />

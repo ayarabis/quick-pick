@@ -1,7 +1,3 @@
-import '$lib/app.postcss';
-import '@mdi/font/css/materialdesignicons.min.css';
-import '@skeletonlabs/skeleton/styles/all.css';
-import '@skeletonlabs/skeleton/themes/theme-rocket.css';
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
 import { Command } from '@tauri-apps/api/shell';
 import { writable } from 'svelte/store';
@@ -27,6 +23,7 @@ type QuickApp = { app: string; iconName: string; iconPath: string };
 const store = new Store('.items.dat');
 const appStore = new Store('.apps.dat');
 const journalStore = new Store('.journal.dat')
+const settingStore = new Store('.settings.dat')
 const canHide = writable(true);
 
 export async function showNotification(title: string, body: string) {
@@ -85,5 +82,5 @@ export const extensionMap: { [key: string]: string } = {
 }
 
 export type { Item, Action, ItemType, QuickApp };
-export { store, appStore, journalStore, canHide };
+export { store, appStore, journalStore, canHide, settingStore };
 
