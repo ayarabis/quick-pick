@@ -229,7 +229,7 @@
 			if (docHeight > maxHeight && searchItems.length) {
 				panelHeight = maxHeight;
 			} else if (searchItems.length) {
-				panelHeight = docHeight + 5;
+				panelHeight = docHeight + 9;
 			}
 
 			size.height = 92 + panelHeight;
