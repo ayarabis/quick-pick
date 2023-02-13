@@ -26,7 +26,7 @@
 	class="flex items-center justify-between pl-2 bg-surface-800 cursor-move text-white">
 	{title}
 	<div>
-		<slot name="lead-ations" />
+		<slot name="lead-actions" />
 		{#if !hideActions}
 			<button class="titlebar-button" on:click={() => windowAction('min')}>
 				<i class="mdi mdi-window-minimize" />
@@ -38,6 +38,6 @@
 				<i class="mdi mdi-window-close" />
 			</button>
 		{/if}
-		<slot name="trail-ations" />
+		<slot name="trail-actions" />
 	</div>
 </div>
