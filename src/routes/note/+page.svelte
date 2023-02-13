@@ -5,20 +5,16 @@
 	import Header from '$lib/components/Header.svelte';
 	import TitleBar from '$lib/components/TitleBar.svelte';
 	import { AppShell, Toast, toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
-	import { emit, type UnlistenFn } from '@tauri-apps/api/event';
+	import { emit } from '@tauri-apps/api/event';
 	import { appWindow } from '@tauri-apps/api/window';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	let item: Item | null;
 	let name = $page.url.searchParams.get('name') ?? '';
 
-	let pinWindow = false;
-
 	let editor: HTMLElement;
 	let quill: any;
-
-	const eventListeners: UnlistenFn[] = [];
 
 	onMount(async () => {
 		const { default: Quill } = await import('quill');
@@ -35,20 +31,6 @@
 		if (item) {
 			quill.setContents(item?.content);
 		}
-
-		eventListeners.push(
-			await appWindow.onFocusChanged((e) => {
-				if (!e.payload && !pinWindow) {
-					appWindow.close();
-				}
-			})
-		);
-	});
-
-	onDestroy(async () => {
-		eventListeners.forEach(async (e) => {
-			e();
-		});
 	});
 
 	async function save() {
@@ -106,13 +88,7 @@
 <Toast padding="p-2" buttonDismiss="btn-sm btn-round-full bg-white shadow-md p-1" />
 <AppShell>
 	<svelte:fragment slot="header">
-		<TitleBar title="Quick Pick - Note" hideActions>
-			<svelte:fragment slot="other-actions">
-				<button class="titlebar-button" on:click={() => (pinWindow = !pinWindow)}>
-					<i class="mdi {pinWindow ? 'mdi-pin-off' : 'mdi-pin'} " />
-				</button>
-			</svelte:fragment>
-		</TitleBar>
+		<TitleBar title="Quick Pick - Note" hideActions />
 		<Header>
 			<svelte:fragment slot="title">
 				<strong contenteditable="true" bind:innerHTML={name} class="text-xl outline-none"
