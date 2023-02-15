@@ -8,7 +8,6 @@
 	import groupBy from 'lodash.groupby';
 	import moment from 'moment';
 	import { onMount } from 'svelte';
-	import {  storeLightSwitch } from '@skeletonlabs/skeleton';
 
 	let pinWindow = false;
 
@@ -35,13 +34,19 @@
 		pinWindow = !pinWindow;
 		appWindow.setAlwaysOnTop(pinWindow);
 	}
+
+	async function deleteItem(item: any) {
+		await journalStore.delete(item.id);
+		await journalStore.save();
+		await loadItems();
+	}
 </script>
 
 <Toast padding="p-2" buttonDismiss="btn-sm btn-round-full bg-white shadow-md p-1" />
 <AppShell>
 	<svelte:fragment slot="header">
 		<TitleBar title="Quick Pick - Journal">
-			<svelte:fragment slot="lead-ations">
+			<svelte:fragment slot="lead-actions">
 				<button class="titlebar-button" on:click={togglePin}>
 					<i class="mdi {pinWindow ? 'mdi-pin-off text-primary-600' : 'mdi-pin'}" />
 				</button>
@@ -58,8 +63,13 @@
 					<span class="chip bg-primary-500">{day}</span>
 				</div>
 				{#each activities as item}
-					<div class="card rounded-md px-2 pb-2 mb-1 ml-3">
-						<span class="text-sm text-surface-300">{item.timestamp}</span>
+					<div class="card rounded-md px-2 pb-2 pt-1 mb-1 ml-3">
+						<div class="flex justify-between">
+							<span class="text-sm text-surface-300">{item.timestamp}</span>
+							<button on:click={() => deleteItem(item)}>
+								<i class="mdi mdi-delete hover:text-red-400 text-sm" />
+							</button>
+						</div>
 						<div>{item.activity}</div>
 					</div>
 				{/each}
