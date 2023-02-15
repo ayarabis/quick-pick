@@ -157,12 +157,13 @@
 				event.stopImmediatePropagation();
 				break;
 			case 'Tab':
+				const actions = document.querySelectorAll('#panel .item.active .action');
 				if (event.shiftKey) {
-					if (actionIndex != 0) actionIndex--;
+					if (!actionIndex) actionIndex = actions.length;
+					actionIndex--;
 				} else {
-					const actions = document.querySelectorAll('#panel .item.active .action');
-
-					if (actionIndex < actions.length - 1) actionIndex++;
+					actionIndex++;
+					if (actionIndex == actions.length) actionIndex = 0;
 				}
 				event.preventDefault();
 				event.stopImmediatePropagation();
@@ -208,11 +209,13 @@
 					{
 						name: 'Create a note',
 						type: 'Action',
+						icon: 'mdi-note-edit',
 						callback: createNote
 					},
 					{
 						name: 'Record activity',
 						type: 'Action',
+						icon: 'mdi-note-plus',
 						callback: recordActivity
 					}
 				);
@@ -258,10 +261,14 @@
 	}
 
 	async function recordActivity() {
-		await journalStore.set(uuidv4(), {
+		const id = uuidv4();
+		await journalStore.set(id, {
+			id,
 			timestamp: moment(),
 			activity: search
 		});
+		search = '';
+		filterItems();
 		await journalStore.save();
 		emit('update-journal');
 	}
@@ -280,6 +287,7 @@
 		await emit('store-update');
 		showNotification('WebURL Saved', path);
 		clearItems();
+		search = '';
 	}
 
 	async function openManager() {
@@ -349,6 +357,9 @@
 		}
 		.item button {
 			min-height: 30px;
+		}
+		body, html {
+			border-radius: 15px !important;
 		}
 	</style>
 </svelte:head>
@@ -442,7 +453,7 @@
 						class="action flex items-center w-full px-2 rounded-md cursor-pointer {disableHover
 							? ''
 							: 'hover:bg-surface-500'}  {active ? 'bg-primary-800' : ''}">
-						<i class="mdi {item.icon}" />
+						<i class="mdi {item.icon} mr-2" />
 						{item.name}
 					</button>
 				{/if}
