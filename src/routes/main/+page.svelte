@@ -201,6 +201,7 @@
 						searchItems.push({
 							name: 'Save as Web URL',
 							type: 'Action',
+							icon: 'mdi-web-plus',
 							callback: saveUrl
 						});
 					} catch (_) {}
@@ -358,7 +359,8 @@
 		.item button {
 			min-height: 30px;
 		}
-		body, html {
+		body,
+		html {
 			border-radius: 15px !important;
 		}
 	</style>
