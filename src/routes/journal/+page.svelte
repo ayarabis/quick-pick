@@ -22,11 +22,16 @@
 	});
 
 	async function loadItems() {
-		const activities = (await journalStore.values()).sort((a: any, b: any) => {
-			if (a.timestamp > b.timestamp) return 1;
-			if (a.timestamp < b.timestamp) return -1;
-			return 0;
-		});
+		const activities = (await journalStore.values())
+			.sort((a: any, b: any) => {
+				if (a.timestamp > b.timestamp) return 1;
+				if (a.timestamp < b.timestamp) return -1;
+				return 0;
+			})
+			.map((e: any) => {
+				e.time = moment(e.timestamp).format('HH:MM:SS');
+				return e;
+			});
 		items = groupBy(activities, (e: any) => moment(e.timestamp).format('MMM DD'));
 	}
 
@@ -65,7 +70,7 @@
 				{#each activities as item}
 					<div class="card rounded-md px-2 pb-2 pt-1 mb-1 ml-3">
 						<div class="flex justify-between">
-							<span class="text-sm text-surface-300">{item.timestamp}</span>
+							<span class="text-sm text-surface-300">{item.time}</span>
 							<button on:click={() => deleteItem(item)}>
 								<i class="mdi mdi-delete hover:text-red-400 text-sm" />
 							</button>
