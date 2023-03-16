@@ -48,6 +48,7 @@
 		"lodash.debounce": "^4.0.8",
 		"lodash.groupby": "^4.6.0",
 		"moment": "^2.29.4",
+		"tauri-plugin-clipboard-api": "^0.2.4",
 		"tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
 		"uuid": "^9.0.0"
 	}

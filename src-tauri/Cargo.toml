@@ -23,11 +23,12 @@ tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", 
 enigo = "0.0.14"
 cocoa = { version = "0.24.1" }
 objc =  { version = "0.2.7" }
+tauri-plugin-clipboard = "0.2.4"
 
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
-default = [ "custom-protocol" ]
+default = ["custom-protocol"]
 # this feature is used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
-custom-protocol = [ "tauri/custom-protocol" ]
+custom-protocol = ["tauri/custom-protocol"]

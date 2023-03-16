@@ -2,8 +2,8 @@
 	import {
 		appStore,
 		canHide,
+		clipboardStore,
 		journalStore,
-		settingStore,
 		showNotification,
 		store,
 		type Item
@@ -22,6 +22,8 @@
 	import moment from 'moment';
 	import { onDestroy, onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
+	import { TEXT_CHANGED, listenText } from 'tauri-plugin-clipboard-api';
+	import ItemClipboard from '$lib/components/ItemClipboard.svelte';
 
 	let items: Item[] = [];
 	let itemHeight = 30;
@@ -42,6 +44,7 @@
 
 	onMount(async () => {
 		eventListeners.push(await listen('store-update', reloadData));
+		eventListeners.push(listenText());
 
 		eventListeners.push(
 			await store.onChange(async (_) => {
@@ -76,6 +79,21 @@
 					}
 					clearItems();
 				}
+			})
+		);
+
+		eventListeners.push(
+			await listen(TEXT_CHANGED, async (e) => {
+				const value: string = (e.payload as any).value;
+				const lines = (value as string).split('\n')
+				const trimmed = lines[0].trim();
+				await clipboardStore.set(trimmed, {
+					id: uuidv4(),
+					type: 'Clipboard',
+					name: trimmed,
+					value
+				});
+				clipboardStore.save();
 			})
 		);
 	});
@@ -177,50 +195,55 @@
 		const main = WebviewWindow.getByLabel('main');
 		const size = (await main!.outerSize()).toLogical(await main!.scaleFactor());
 		if (search) {
-			let _search = search.replace(/f:|s:|w:|n:/gi, '');
-
-			searchItems = items.filter((e) => {
-				const re = new RegExp(_search, 'gi');
-				let result = re.test(e.name);
-				if (search.startsWith('f:')) {
-					result = result && ['File', 'Folder'].includes(e.type);
-				} else if (search.startsWith('w:')) {
-					result = result && e.type == 'WebURL';
-				} else if (search.startsWith('s:')) {
-					result = result && e.type == 'Snippet';
-				} else if (search.startsWith('n:')) {
-					result = result && e.type == 'Note';
-				}
-
-				return result;
-			});
-			if (!searchItems.length) {
-				if (search.startsWith('http')) {
-					try {
-						new URL(search);
-						searchItems.push({
-							name: 'Save as Web URL',
-							type: 'Action',
-							icon: 'mdi-web-plus',
-							callback: saveUrl
-						});
-					} catch (_) {}
-				}
-				searchItems.push(
-					{
-						name: 'Create a note',
-						type: 'Action',
-						icon: 'mdi-note-edit',
-						callback: createNote
-					},
-					{
-						name: 'Record activity',
-						type: 'Action',
-						icon: 'mdi-note-plus',
-						callback: recordActivity
-					}
+			let _search = search.replace(/f:|s:|w:|n:|c:/gi, '');
+			const re = new RegExp(_search, 'gi');
+			if (search.startsWith('c:')) {
+				searchItems = ((await clipboardStore.values()) as Item[]).filter((e) =>
+					re.test((e as any).name)
 				);
-				searchItems = searchItems;
+			} else {
+				searchItems = items.filter((e) => {
+					let result = re.test(e.name);
+					if (search.startsWith('f:')) {
+						result = result && ['File', 'Folder'].includes(e.type);
+					} else if (search.startsWith('w:')) {
+						result = result && e.type == 'WebURL';
+					} else if (search.startsWith('s:')) {
+						result = result && e.type == 'Snippet';
+					} else if (search.startsWith('n:')) {
+						result = result && e.type == 'Note';
+					}
+
+					return result;
+				});
+				if (!searchItems.length) {
+					if (search.startsWith('http')) {
+						try {
+							new URL(search);
+							searchItems.push({
+								name: 'Save as Web URL',
+								type: 'Action',
+								icon: 'mdi-web-plus',
+								callback: saveUrl
+							});
+						} catch (_) {}
+					}
+					searchItems.push(
+						{
+							name: 'Create a note',
+							type: 'Action',
+							icon: 'mdi-note-edit',
+							callback: createNote
+						},
+						{
+							name: 'Record activity',
+							type: 'Action',
+							icon: 'mdi-note-plus',
+							callback: recordActivity
+						}
+					);
+					searchItems = searchItems;
+				}
 			}
 		} else {
 			searchItems = [];
@@ -449,6 +472,8 @@
 					<ItemUrl {item} {active} {disableHover} />
 				{:else if item.type == 'Note'}
 					<ItemNote {item} {active} {disableHover} />
+				{:else if item.type == 'Clipboard'}
+					<ItemClipboard {item} {active} {disableHover} />
 				{:else if (item.type = 'Action')}
 					<button
 						on:click|preventDefault|stopPropagation={item.callback}

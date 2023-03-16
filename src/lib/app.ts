@@ -3,7 +3,7 @@ import { Command } from '@tauri-apps/api/shell';
 import { writable } from 'svelte/store';
 import { Store } from 'tauri-plugin-store-api';
 
-type ItemType = 'Folder' | 'File' | 'WebURL' | 'Snippet' | 'Action' | 'Note';
+type ItemType = 'Folder' | 'File' | 'WebURL' | 'Snippet' | 'Action' | 'Note' | 'Clipboard';
 
 type Item = {
     id?: string
@@ -24,6 +24,7 @@ const store = new Store('.items.dat');
 const appStore = new Store('.apps.dat');
 const journalStore = new Store('.journal.dat')
 const settingStore = new Store('.settings.dat')
+const clipboardStore = new Store('.clipboard.dat')
 const canHide = writable(true);
 
 export async function showNotification(title: string, body: string) {
@@ -82,5 +83,5 @@ export const extensionMap: { [key: string]: string } = {
 }
 
 export type { Item, Action, ItemType, QuickApp };
-export { store, appStore, journalStore, canHide, settingStore };
+export { store, appStore, journalStore, canHide, settingStore, clipboardStore };
 
