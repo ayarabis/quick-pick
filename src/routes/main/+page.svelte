@@ -469,7 +469,7 @@
 				{:else if ['File', 'Folder'].includes(item.type)}
 					<ItemResource {item} {active} {disableHover} {actionIndex} />
 				{:else if item.type == 'WebURL'}
-					<ItemUrl {item} {active} {disableHover} />
+					<ItemUrl {item} {active} {disableHover} {actionIndex} />
 				{:else if item.type == 'Note'}
 					<ItemNote {item} {active} {disableHover} />
 				{:else if item.type == 'Clipboard'}
