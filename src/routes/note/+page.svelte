@@ -102,6 +102,9 @@
 				<input
 					type="text"
 					class="!bg-transparent"
+					autocomplete="off"
+					autocapitalize="off"
+					autocorrect="off"
 					bind:value={name}
 					on:input={titleChanged} />
 			</svelte:fragment>

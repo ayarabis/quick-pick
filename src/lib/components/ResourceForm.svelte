@@ -62,7 +62,7 @@
 		{/if}
 		<label>
 			<span>Name</span>
-			<input type="text" bind:value={formData.name} placeholder="Resource name" />
+			<input type="text" placeholder="Resource name" bind:value={formData.name} />
 		</label>
 		{#if formData.type == 'Snippet'}
 			<label>
@@ -70,38 +70,38 @@
 				<textarea
 					rows="5"
 					id="code"
-					bind:value={formData.content}
 					placeholder="Hello World"
 					autocomplete="off"
 					autocapitalize="off"
-					autocorrect="off" />
+					autocorrect="off"
+					bind:value={formData.content} />
 			</label>
 		{:else if formData.type == 'WebURL'}
 			<label>
 				<span>URL</span>
 				<input
 					type="text"
-					bind:value={formData.path}
 					placeholder="https://"
-					on:keyup={checkUrl}
 					autocomplete="off"
 					autocapitalize="off"
-					autocorrect="off" />
+					autocorrect="off"
+					bind:value={formData.path}
+					on:keyup={checkUrl} />
 			</label>
 		{:else}
 			<label>
 				<span>Path</span>
 				<div class="flex items-center pr-1">
 					<input
-						on:click={selectPath}
 						readonly
 						type="text"
-						bind:value={formData.path}
-						placeholder="Click select"
+						placeholder="Click here to select"
 						autocomplete="off"
 						autocapitalize="off"
 						autocorrect="off"
-						class=" cursor-pointer" />
+						class="cursor-pointer"
+						on:click={selectPath}
+						bind:value={formData.path} />
 				</div>
 			</label>
 		{/if}

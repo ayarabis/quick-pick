@@ -18,6 +18,10 @@
 
 	import { extensionMap, showNotification, store, type Item, type ItemType } from '$lib/app';
 	import Header from '$lib/components/Header.svelte';
+	import ItemNote from '$lib/components/ItemNote.svelte';
+	import ItemResource from '$lib/components/ItemResource.svelte';
+	import ItemSnippet from '$lib/components/ItemSnippet.svelte';
+	import ItemUrl from '$lib/components/ItemUrl.svelte';
 	import TitleBar from '$lib/components/TitleBar.svelte';
 	import { menu } from '@skeletonlabs/skeleton';
 	import { emit, listen, TauriEvent, type UnlistenFn } from '@tauri-apps/api/event';
@@ -26,9 +30,7 @@
 	import ClipboardJS from 'clipboard';
 	import debounce from 'lodash.debounce';
 	import { onDestroy, onMount, SvelteComponent } from 'svelte';
-	import { HighlightAuto } from 'svelte-highlight';
 	import { writable, type Writable } from 'svelte/store';
-	import DeleteBtn from './DeleteBtn.svelte';
 
 	let search = '';
 	let fileHover = false;
@@ -327,6 +329,9 @@
 		pre {
 			border-radius: 15px !important;
 		}
+		.radio-group {
+			border-color: transparent !important;
+		}
 	</style>
 </svelte:head>
 
@@ -342,40 +347,45 @@
 		</Header>
 		<div class="p-1">
 			<div class="w-full card flex items-center">
-				<div class="relative flex-grow flex whitespace-nowrap">
-					<i class="mdi mdi-magnify absolute left-3 top-[50%] translate-y-[-50%]" />
-					<input
-						bind:value={search}
-						type="text"
-						class="!bg-transparent px-7"
-						autocomplete="off"
-						autocapitalize="off"
-						autocorrect="off"
-						on:input={filterItems} />
-					{#if search}
-						<button
-							class="absolute right-3 top-[50%] translate-y-[-50%]"
-							on:click={() => (search = '')}>
-							<i class="mdi mdi-backspace" />
-						</button>
-					{/if}
-				</div>
-				<div class="whitespace-nowrap">
-					<RadioGroup selected={typeFilter} padding="px-2 py-1">
-						<RadioItem value="All">All</RadioItem>
-						<RadioItem value="File">
-							<i class="mdi mdi-folder-file" />
-						</RadioItem>
-						<RadioItem value="WebURL">
-							<i class="mdi mdi-web" />
-						</RadioItem>
-						<RadioItem value="Snippet">
-							<i class="mdi mdi-code-braces" />
-						</RadioItem>
-						<RadioItem value="Note">
-							<i class="mdi mdi-note-edit" />
-						</RadioItem>
-					</RadioGroup>
+				<div class="flex flex-nowrap bg-surface-200-700-token rounded-full w-full">
+					<div class="relative flex-grow flex whitespace-nowrap">
+						<i class="mdi mdi-magnify absolute left-3 top-[50%] translate-y-[-50%]" />
+						<input
+							type="text"
+							class="px-7"
+							autocomplete="off"
+							autocapitalize="off"
+							autocorrect="off"
+							bind:value={search}
+							on:input={filterItems} />
+						{#if search}
+							<button
+								class="absolute right-3 top-[50%] translate-y-[-50%]"
+								on:click={() => {
+									search = '';
+									filterItems();
+								}}>
+								<i class="mdi mdi-backspace" />
+							</button>
+						{/if}
+					</div>
+					<div class="whitespace-nowrap">
+						<RadioGroup selected={typeFilter} padding="px-2 py-1">
+							<RadioItem value="All">All</RadioItem>
+							<RadioItem value="File">
+								<i class="mdi mdi-folder-file" />
+							</RadioItem>
+							<RadioItem value="WebURL">
+								<i class="mdi mdi-web" />
+							</RadioItem>
+							<RadioItem value="Snippet">
+								<i class="mdi mdi-code-braces" />
+							</RadioItem>
+							<RadioItem value="Note">
+								<i class="mdi mdi-note-edit" />
+							</RadioItem>
+						</RadioGroup>
+					</div>
 				</div>
 				<span class="divider-vertical h-4 ml-3" />
 				<span class="relative">
@@ -393,15 +403,15 @@
 						<ul>
 							<li>
 								<button
-									on:click={() => createResource('File')}
-									class="option w-full">
+									class="option w-full"
+									on:click={() => createResource('File')}>
 									<i class="mdi mdi-folder mr-2" />
 									File/Folder</button>
 							</li>
 							<li>
 								<button
-									on:click={() => createResource('WebURL')}
-									class="option w-full">
+									class="option w-full"
+									on:click={() => createResource('WebURL')}>
 									<i class="mdi mdi-web mr-2" />
 									WebURL</button>
 							</li>
@@ -428,91 +438,18 @@
 	<div class="h-full px-1">
 		{#each searchItems as item, i}
 			{#if ['File', 'Folder'].includes(item.type)}
-				<div class="card w-full mb-1 overflow-x-hidden h-7">
-					<div class="text-left flex justify-between items-center pl-2 relative h-full">
-						<div class="flex items-center">
-							{#if item.type == 'Folder'}
-								<i class="mdi mdi-folder mr-2" />
-							{:else}
-								<i
-									class="mdi mr-2 {extensionMap[item.ext || ''] ||
-										'mdi-file-question'}" />
-							{/if}
-							<div class="whitespace-nowrap mr-2">{item.name}</div>
-							<span
-								class="text-sm line-clamp-1 whitespace-pre-wrap text-surface-400 mr-5">
-								{item.path}
-							</span>
-						</div>
-						<div class="flex gap-3 items-center sticky right-0 card px-2 h-full">
-							<button on:click={() => editResource(item)}>
-								<i class="mdi mdi-pencil text-primary-400" />
-							</button>
-							<DeleteBtn {item} />
-						</div>
-					</div>
-				</div>
+				<ItemResource {item} manage={true} on:edit={() => editResource(item)} />
 			{:else if item.type == 'WebURL'}
-				<div class="card w-full mb-1 overflow-hidden h-7">
-					<div class="text-left flex justify-between items-center pl-2 h-full">
-						<div class="flex items-center">
-							<i class="mdi mdi-web mr-2" />
-							<span class="ml-1 whitespace-nowrap mr-2">{item.name}</span>
-							<div
-								class="text-sm line-clamp-1 whitespace-pre-wrap text-surface-400 mr-5">
-								{item.path}
-							</div>
-						</div>
-						<div class="flex gap-3 items-center sticky right-0 card px-2 h-full">
-							<button on:click={() => editResource(item)}>
-								<i class="mdi mdi-pencil text-primary-400" />
-							</button>
-							<DeleteBtn {item} />
-						</div>
-					</div>
-				</div>
+				<ItemUrl {item} manage={true} on:edit={() => editResource(item)} />
 			{:else if item.type == 'Note'}
-				<div class="card w-full mb-1 overflow-hidden h-7">
-					<div class="text-left flex justify-between items-center pl-2 h-full">
-						<div class="flex items-center">
-							<i class="mdi mdi-note-edit" />
-							<span class="ml-1 whitespace-nowrap mr-2">{item.name}</span>
-						</div>
-						<div class="flex gap-3 items-center sticky right-0 card px-2">
-							<button on:click={() => openNote(item)}>
-								<i class="mdi mdi-pencil text-primary-400" />
-							</button>
-							<DeleteBtn {item} />
-						</div>
-					</div>
-				</div>
+				<ItemNote {item} manage={true} on:edit={() => openNote(item)} />
 			{:else if item.type == 'Snippet'}
-				<div class="card w-full mb-1 rounded-2xl">
-					<div class="text-left flex justify-between items-center mb-1 px-2">
-						<div class="whitespace-nowrap">
-							<i class="mdi mdi-code-braces mr-2" />
-							{item.name}
-						</div>
-						<div class="flex gap-3 pt-1 items-center">
-							<button class="copy" data-clipboard-target="#snippet_{i}">
-								<i class="mdi mdi-content-copy" />
-							</button>
-							<button on:click={() => editResource(item)}>
-								<i class="mdi mdi-pencil text-primary-400" />
-							</button>
-							<DeleteBtn {item} />
-						</div>
-					</div>
-					<div class="p-1">
-						<HighlightAuto code={item.content} id="snippet_{i}" />
-					</div>
-				</div>
+				<ItemSnippet {item} manage={true} on:edit={() => editResource(item)} />
 			{/if}
 		{:else}
 			<div
 				class="h-full flex flex-col justify-center items-center text-3xl font-bold text-surface-500">
 				<i class="mdi mdi-text-search" />
-
 				<span>Empty Catalog</span>
 			</div>
 		{/each}
