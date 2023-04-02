@@ -23,7 +23,7 @@
 
 <div
 	data-tauri-drag-region
-	class="flex items-center justify-between pl-2 bg-surface-800 cursor-move text-white">
+	class="flex items-center justify-between p-2 bg-surface-800 cursor-move text-white">
 	{title}
 	<div>
 		<slot name="lead-actions" />
