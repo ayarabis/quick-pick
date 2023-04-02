@@ -91,18 +91,17 @@
 		{:else}
 			<label>
 				<span>Path</span>
-				<div class="flex items-center bg-surface-700 pr-1">
+				<div class="flex items-center pr-1">
 					<input
+						on:click={selectPath}
 						readonly
 						type="text"
 						bind:value={formData.path}
 						placeholder="Click select"
-						class="!bg-transparent"
 						autocomplete="off"
 						autocapitalize="off"
-						autocorrect="off" />
-					<button on:click={selectPath} class="btn btn-sm btn-ghost-primary"
-						>Select</button>
+						autocorrect="off"
+						class=" cursor-pointer" />
 				</div>
 			</label>
 		{/if}
