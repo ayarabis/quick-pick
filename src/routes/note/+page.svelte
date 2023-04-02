@@ -7,6 +7,7 @@
 	import { AppShell, Toast, toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 	import { emit } from '@tauri-apps/api/event';
 	import { appWindow } from '@tauri-apps/api/window';
+	import debounce from 'lodash.debounce';
 	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
@@ -15,6 +16,7 @@
 
 	let editor: HTMLElement;
 	let quill: any;
+	let saved = false;
 
 	onMount(async () => {
 		const { default: Quill } = await import('quill');
@@ -24,6 +26,16 @@
 				toolbar: '#toolbar-container'
 			},
 			theme: 'snow'
+		});
+
+		const debounceSave = debounce(() => {
+			save();
+			saved = true;
+		}, 200);
+
+		quill.on('text-change', () => {
+			saved = false;
+			debounceSave();
 		});
 
 		item = await store.get(`Note:${name}`);
@@ -48,13 +60,13 @@
 		await store.save();
 		await emit('store-update');
 
-		const toast: ToastSettings = {
-			message: 'Saved!',
-			preset: 'success',
-			autohide: true,
-			timeout: 1000
-		};
-		toastStore.trigger(toast);
+		// const toast: ToastSettings = {
+		// 	message: 'Saved!',
+		// 	preset: 'success',
+		// 	autohide: true,
+		// 	timeout: 1000
+		// };
+		// toastStore.trigger(toast);
 	}
 
 	function close() {
@@ -82,23 +94,25 @@
 		.ql-container {
 			border: none !important;
 		}
+		.app-bar-lead {
+			width: 100%;
+		}
 	</style>
 </svelte:head>
 
 <Toast padding="p-2" buttonDismiss="btn-sm btn-round-full bg-white shadow-md p-1" />
 <AppShell>
 	<svelte:fragment slot="header">
-		<TitleBar title="Quick Pick - Note" hideActions />
+		<TitleBar title="Quick Pick - Note" />
 		<Header>
 			<svelte:fragment slot="title">
-				<strong contenteditable="true" bind:innerHTML={name} class="text-xl outline-none"
-					>{name}</strong>
-				<i class="mdi mdi-pencil ml-2" />
+				<input type="text" class="!bg-transparent" bind:value={name} />
 			</svelte:fragment>
 		</Header>
 	</svelte:fragment>
 	<div class="dark:bg-surface-700 h-[100%] overflow-hidden">
 		<div id="toolbar-container" class="dark:!text-white">
+			<i class="mdi mdi-content-save" />
 			<span class="ql-formats">
 				<select class="ql-font" />
 				<select class="ql-size" />
@@ -147,9 +161,14 @@
 		<div bind:this={editor} class="h-full" />
 	</div>
 	<svelte:fragment slot="footer">
-		<div class="flex justify-end gap-3 p-2">
-			<button on:click={close} class="btn btn-sm">Close</button>
-			<button on:click={save} class="btn btn-sm btn-filled-primary">Save</button>
+		<div class="flex justify-end h-5 px-2">
+			{#if saved}
+				<div class="text-secondary-500 flex">
+					<i class="mdi mdi-content-save text-sm mr-2 " />
+					<i class="mdi mdi-check text-sm mr-2 " />
+					<span class="text-sm ">saved</span>
+				</div>
+			{/if}
 		</div>
 	</svelte:fragment>
 </AppShell>
