@@ -4,9 +4,8 @@
 	import { store, type Item } from '$lib/app';
 	import Header from '$lib/components/Header.svelte';
 	import TitleBar from '$lib/components/TitleBar.svelte';
-	import { AppShell, Toast, toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+	import { AppShell, Toast } from '@skeletonlabs/skeleton';
 	import { emit } from '@tauri-apps/api/event';
-	import { appWindow } from '@tauri-apps/api/window';
 	import debounce from 'lodash.debounce';
 	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +17,11 @@
 	let quill: any;
 	let saved = false;
 
+	const debounceSave = debounce(() => {
+		save();
+		saved = true;
+	}, 200);
+
 	onMount(async () => {
 		const { default: Quill } = await import('quill');
 
@@ -27,11 +31,6 @@
 			},
 			theme: 'snow'
 		});
-
-		const debounceSave = debounce(() => {
-			save();
-			saved = true;
-		}, 200);
 
 		quill.on('text-change', () => {
 			saved = false;
@@ -48,29 +47,23 @@
 	async function save() {
 		const data = {
 			id: item?.id ?? uuidv4(),
-			name,
+			name: name.trim(),
 			content: quill.getContents(),
 			type: 'Note'
-		};
+		} as Item;
 
 		if (item) {
 			await store.delete(`Note:${item.name}`);
 		}
-		await store.set(`Note:${name}`, data);
+		item = data;
+		await store.set(`Note:${name.trim()}`, data);
 		await store.save();
 		await emit('store-update');
-
-		// const toast: ToastSettings = {
-		// 	message: 'Saved!',
-		// 	preset: 'success',
-		// 	autohide: true,
-		// 	timeout: 1000
-		// };
-		// toastStore.trigger(toast);
 	}
 
-	function close() {
-		appWindow.close();
+	function titleChanged() {
+		saved = false;
+		debounceSave();
 	}
 </script>
 
@@ -106,13 +99,16 @@
 		<TitleBar title="Quick Pick - Note" />
 		<Header>
 			<svelte:fragment slot="title">
-				<input type="text" class="!bg-transparent" bind:value={name} />
+				<input
+					type="text"
+					class="!bg-transparent"
+					bind:value={name}
+					on:input={titleChanged} />
 			</svelte:fragment>
 		</Header>
 	</svelte:fragment>
 	<div class="dark:bg-surface-700 h-[100%] overflow-hidden">
 		<div id="toolbar-container" class="dark:!text-white">
-			<i class="mdi mdi-content-save" />
 			<span class="ql-formats">
 				<select class="ql-font" />
 				<select class="ql-size" />
