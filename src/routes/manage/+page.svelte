@@ -378,14 +378,17 @@
 					</RadioGroup>
 				</div>
 				<span class="divider-vertical h-4 ml-3" />
-				<!-- <button on:click={() => openResourceForm()} class="btn btn-sm">Add Item</button> -->
-				<!-- Use a wrapping .relative class to confine the menu position -->
 				<span class="relative">
-					<!-- Trigger: apply the 'use:menu' action and supply the unique menu ID -->
-					<button class="whitespace-nowrap px-2" use:menu={{ menu: 'create-menu' }}
-						>Add Item</button>
+					{#if $typeFilter == 'All'}
+						<button
+							class="whitespace-nowrap px-2 pr-3"
+							use:menu={{ menu: 'create-menu' }}>Add Item</button>
+					{:else}
+						<button
+							class="whitespace-nowrap px-2 pr-3"
+							on:click={() => createResource($typeFilter)}>Add Item</button>
+					{/if}
 
-					<!-- Menu: set a matching 'data-menu-[menuId]' attribute -->
 					<nav class="list-nav card p-2 w-34 shadow-xl" data-menu="create-menu">
 						<ul>
 							<li>
