@@ -5,7 +5,7 @@ declare namespace App {
 	// interface Locals {}
 	// interface PageData {}
 	// interface Error {}
-	// interface Platform {} 
+	// interface Platform {}
 }
 
 declare namespace svelte.JSX {
@@ -14,5 +14,4 @@ declare namespace svelte.JSX {
 	}
 }
 
-declare namespace svelteHTML {
-}
+declare namespace svelteHTML {}

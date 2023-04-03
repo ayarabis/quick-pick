@@ -455,4 +455,4 @@
 	</div>
 </AppShell>
 <Modal width="w-full md:w-2/3" />
-<Toast />
+<Toast padding="p2 px-4" buttonAction="btn bg-secondary-500 p-2" buttonDismiss="p-2 bg-white" />

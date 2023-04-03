@@ -85,7 +85,7 @@
 		eventListeners.push(
 			await listen(TEXT_CHANGED, async (e) => {
 				const value: string = (e.payload as any).value;
-				const lines = (value as string).split('\n')
+				const lines = (value as string).split('\n');
 				const trimmed = lines[0].trim();
 				await clipboardStore.set(trimmed, {
 					id: uuidv4(),

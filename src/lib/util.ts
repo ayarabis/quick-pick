@@ -1,5 +1,5 @@
 const basename = (path: string) => {
-    return path.split('/').reverse()[0];
-}
+	return path.split('/').reverse()[0];
+};
 
-export { basename }
+export { basename };

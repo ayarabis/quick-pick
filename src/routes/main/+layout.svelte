@@ -7,7 +7,7 @@
 
 	store.save();
 	appStore.save();
-	journalStore.save()
+	journalStore.save();
 </script>
 
 <svelte:head>

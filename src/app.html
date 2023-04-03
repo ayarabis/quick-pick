@@ -1,58 +1,55 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<meta name="viewport" content="width=device-width" />
+		%sveltekit.head%
+		<style>
+			body,
+			html {
+				padding: 0;
+				margin: 0;
+				overflow: hidden;
+			}
 
-<head>
-	<meta charset="utf-8" />
-	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-	<meta name="viewport" content="width=device-width" />
-	%sveltekit.head%
-	<style>
-		body,
-		html {
-			padding: 0;
-			margin: 0;
-			overflow: hidden;
-		}
+			.titlebar {
+				height: 30px;
+				user-select: none;
+				display: flex;
+				justify-content: flex-end;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+			}
 
-		.titlebar {
-			height: 30px;
-			user-select: none;
-			display: flex;
-			justify-content: flex-end;
-			position: fixed;
-			top: 0;
-			left: 0;
-			right: 0;
-		}
+			.titlebar-button {
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+				width: 30px;
+				height: 30px;
+			}
 
-		.titlebar-button {
-			display: inline-flex;
-			justify-content: center;
-			align-items: center;
-			width: 30px;
-			height: 30px;
-		}
+			.titlebar-button:hover {
+				background: #5bbec3;
+			}
 
-		.titlebar-button:hover {
-			background: #5bbec3;
-		}
+			pre {
+				padding: 0px !important;
+				background: transparent !important;
+				overflow: hidden;
+			}
+		</style>
+	</head>
 
-		pre {
-			padding: 0px !important;
-			background: transparent !important;
-			overflow: hidden;
-		}
-
-	</style>
-</head>
-
-<body>
-	<div style="display: contents" class="overflow-hidden">%sveltekit.body%</div>
-	<!-- <script>
+	<body>
+		<div style="display: contents" class="overflow-hidden">%sveltekit.body%</div>
+		<!-- <script>
 		const { invoke } = window.__TAURI__.tauri
 
 		invoke('init_spotlight_window')
 	</script> -->
-</body>
-
+	</body>
 </html>
