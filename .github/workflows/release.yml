@@ -5,20 +5,28 @@ on:
 
 jobs:
   release:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest]
     permissions:
       contents: write
       issues: write
       pull-requests: write
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: 18
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
       # run semantic-relase
+      - name: Install frontend dependencies
+        run: npm install
       - run: |
             npm ci
-            npm run build
+            npm run tauri build
             npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

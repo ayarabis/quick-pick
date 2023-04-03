@@ -1,6 +1,7 @@
 {
 	"name": "quick-pick",
 	"version": "0.2.0",
+	"description": "A simple personalized search tool",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",

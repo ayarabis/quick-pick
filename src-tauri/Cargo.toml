@@ -1,11 +1,12 @@
 [package]
-name = "app"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+name = "quick-pick"
+# see used package.json version
+version = "0.0.0" 
+description = "A simple personalized search tool"
+authors = ["Aldrin Arabis"]
 license = ""
-repository = ""
-default-run = "app"
+repository = "https://github.com/arabisaldrin/quick-pick"
+default-run = "quick-pick"
 edition = "2021"
 rust-version = "1.59"
 

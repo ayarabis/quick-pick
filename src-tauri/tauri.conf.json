@@ -9,7 +9,7 @@
 	},
 	"package": {
 		"productName": "Quick Pick",
-		"version": "0.1.0"
+		"version": "../package.json"
 	},
 	"tauri": {
 		"allowlist": {
