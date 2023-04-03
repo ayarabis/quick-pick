@@ -389,16 +389,15 @@
 				</div>
 				<span class="divider-vertical h-4 ml-3" />
 				<span class="relative">
-					{#if $typeFilter == 'All'}
+					{#if $typeFilter != 'All'}
 						<button
-							class="whitespace-nowrap px-2 pr-3"
-							use:menu={{ menu: 'create-menu' }}>Add Item</button>
-					{:else}
-						<button
-							class="whitespace-nowrap px-2 pr-3"
+							class="whitespace-nowrap px-2 mr-3"
 							on:click={() => createResource($typeFilter)}>Add Item</button>
 					{/if}
-
+					<button
+						class="whitespace-nowrap px-2 mr-3"
+						class:hidden={$typeFilter != 'All'}
+						use:menu={{ menu: 'create-menu' }}>Add Item</button>
 					<nav class="list-nav card p-2 w-34 shadow-xl" data-menu="create-menu">
 						<ul>
 							<li>
