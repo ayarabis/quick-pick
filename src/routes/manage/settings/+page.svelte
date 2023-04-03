@@ -3,6 +3,7 @@
 	import TitleBar from '$lib/components/TitleBar.svelte';
 
 	import { AppShell } from '@skeletonlabs/skeleton';
+	import General from './General.svelte';
 	import Theme from './Theme.svelte';
 
 	const settings: any = {};
@@ -11,6 +12,10 @@
 		{
 			title: 'Theme',
 			component: Theme
+		},
+		{
+			title: 'General',
+			component: General
 		}
 	];
 </script>
@@ -26,7 +31,7 @@
 			</svelte:fragment>
 		</Header>
 	</svelte:fragment>
-	<div class="p-2 h-full">
+	<div class="p-2 h-full flex flex-col gap-3">
 		{#each sections as section}
 			<div class="card rounded-md shadow-sm p-2">
 				<h4 class="font-bold">{section.title}</h4>
